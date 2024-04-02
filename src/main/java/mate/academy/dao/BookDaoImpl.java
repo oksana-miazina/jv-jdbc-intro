@@ -109,7 +109,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book mapResultToBook(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong(ID_COLUMN);
+        Long id = resultSet.getObject(ID_COLUMN, Long.class);
         String title = resultSet.getString(TITLE_COLUMN);
         BigDecimal price = resultSet.getObject(PRICE_COLUMN, BigDecimal.class);
 
