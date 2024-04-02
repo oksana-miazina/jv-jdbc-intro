@@ -10,12 +10,14 @@ public class ConnectionUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/book_jdbc";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "12345678";
+    private static final String PROPERTIES_USER_KEY = "user";
+    private static final String PROPERTIES_PASSWORD_KEY = "password";
     private static final Properties DB_PROPERTIES;
 
     static {
         DB_PROPERTIES = new Properties();
-        DB_PROPERTIES.put("user", DB_USER);
-        DB_PROPERTIES.put("password", DB_PASSWORD);
+        DB_PROPERTIES.put(PROPERTIES_USER_KEY, DB_USER);
+        DB_PROPERTIES.put(PROPERTIES_PASSWORD_KEY, DB_PASSWORD);
 
         try {
             Class.forName(DB_DRIVER);

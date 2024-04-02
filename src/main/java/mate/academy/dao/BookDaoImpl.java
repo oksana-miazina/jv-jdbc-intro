@@ -16,6 +16,10 @@ import mate.academy.util.ConnectionUtil;
 
 @Dao
 public class BookDaoImpl implements BookDao {
+    private static final String ID_COLUMN = "id";
+    private static final String TITLE_COLUMN = "title";
+    private static final String PRICE_COLUMN = "price";
+
     @Override
     public Book create(Book book) {
         String sql = "INSERT INTO books (title, price) VALUES (?, ?)";
@@ -27,11 +31,7 @@ public class BookDaoImpl implements BookDao {
             statement.setBigDecimal(2, book.getPrice());
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new DataProcessingException(
-                        "Expected to insert at least one row, but inserted 0 rows for book: "
-                                + book);
-            }
+            validateAffectedRows(affectedRows, book);
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Long id = generatedKeys.getObject(1, Long.class);
@@ -87,11 +87,7 @@ public class BookDaoImpl implements BookDao {
             statement.setLong(3, book.getId());
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows < 1) {
-                throw new DataProcessingException(
-                        "Expected to update at least one row, but updated 0 rows for book: "
-                                + book);
-            }
+            validateAffectedRows(affectedRows, book);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update a book: " + book, e);
         }
@@ -113,14 +109,22 @@ public class BookDaoImpl implements BookDao {
     }
 
     private Book mapResultToBook(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong("id");
-        String title = resultSet.getString("title");
-        BigDecimal price = resultSet.getObject("price", BigDecimal.class);
+        Long id = resultSet.getLong(ID_COLUMN);
+        String title = resultSet.getString(TITLE_COLUMN);
+        BigDecimal price = resultSet.getObject(PRICE_COLUMN, BigDecimal.class);
 
         Book book = new Book();
         book.setId(id);
         book.setTitle(title);
         book.setPrice(price);
         return book;
+    }
+
+    private void validateAffectedRows(int affectedRows, Book book) {
+        if (affectedRows < 1) {
+            throw new DataProcessingException(
+                    "Expected to affect at least one row, but affected 0 rows for book: "
+                            + book);
+        }
     }
 }
